@@ -1,10 +1,11 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/storage";
 
 // Your web app's Firebase configuration
 var firebaseConfig = {
-  apiKey: "AIzaSyDAG3cI15yGbXoB5Sj4JhAzbw_xtNKtCj8",
+  apiKey: process.env.VUE_APP_FIREBASE,
   authDomain: "musicapp22-d3ab9.firebaseapp.com",
   projectId: "musicapp22-d3ab9",
   storageBucket: "musicapp22-d3ab9.appspot.com",
@@ -16,7 +17,8 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
+const storage = firebase.storage();
 
 const userCollection = db.collection("users");
 
-export { auth, db, userCollection };
+export { auth, db, userCollection, storage };

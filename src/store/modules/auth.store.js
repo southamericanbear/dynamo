@@ -5,18 +5,36 @@ const state = {
   reg_show_alert: false,
   reg_alert_variant: "bg-blue-500",
   reg_alert_msg: "Please wait! Your account is being created.",
+  login_in_submission: false,
+  login_show_alert: false,
+  login_alert_variant: "bg-blue-500",
+  login_alert_msg: "Please wait! Your account is being created.",
   userCreated: null,
   userLogged: null,
+  userLoggedIn: false,
   trash: {},
 };
 
+const mutations = {
+  toggleAuth() {
+    this.state.userLoggedIn = !this.state.userLoggedIn;
+  },
+};
+
 const actions = {
-  async register(value, e) {
+  init_login({ commit }) {
+    const user = auth.currentUser;
+
+    if (user) {
+      commit("toggleAuth");
+    }
+  },
+
+  async register({ commit }, e) {
     this.state.reg_show_alert = true;
     this.state.reg_in_submission = true;
     this.state.reg_alert_variant = "bg-blue-500";
     this.state.reg_alert_msg = "Please wait! Your account is being created.";
-    this.state.trash = value;
 
     try {
       this.state.userCreated = await auth.createUserWithEmailAndPassword(
@@ -32,7 +50,7 @@ const actions = {
     }
 
     try {
-      await userCollection.add({
+      await userCollection.doc(this.state.userCreated.user.uid).set({
         name: e.name,
         email: e.email,
         age: e.age,
@@ -46,16 +64,43 @@ const actions = {
       return;
     }
 
+    await this.state.userCreated.user.updateProfile({
+      displayName: e.name,
+    });
+
+    commit("toggleAuth");
+
     this.state.reg_alert_variant = "bg-green-500";
     this.state.reg_alert_msg = "Success! Your account has been created.";
+    window.location.reload();
   },
-  login(value, e) {
+  async login(value, e) {
     this.state.trash = value;
-    this.state.userLogged = e;
+    this.state.login_show_alert = true;
+    this.state.login_in_submission = true;
+    this.state.login_alert_variant = "bg-blue-500";
+    this.state.login_alert_msg = "Please wait! Your are going to be logged in.";
+
+    try {
+      this.state.userLogged = e;
+      await auth.signInWithEmailAndPassword(e.email, e.password);
+      window.location.reload();
+    } catch (error) {
+      this.state.login_in_submission = false;
+      this.state.login_alert_variant = "bg-red-500";
+      this.state.login_alert_msg = "Invalid credentials.";
+    }
+  },
+
+  async signOut({ commit }) {
+    await auth.signOut();
+    console.log(this.$route);
+    commit("toggleAuth");
   },
 };
 
 export default {
   state,
+  mutations,
   actions,
 };

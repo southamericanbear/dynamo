@@ -81,7 +81,13 @@
               >
             </li>
           </ul>
-
+          <div
+            class="text-white text-center font-bold p-5 mb-4"
+            v-if="login_show_alert"
+            :class="login_alert_variant"
+          >
+            {{ login_alert_msg }}
+          </div>
           <!-- Login Form -->
           <LoginForm v-show="tab === 'login'" />
           <!-- Registration Form -->
@@ -134,6 +140,9 @@ export default {
       "reg_alert_variant",
       "reg_show_alert",
       "reg_alert_msg",
+      "login_alert_variant",
+      "login_show_alert",
+      "login_alert_msg",
     ]),
   },
   methods: {
