@@ -12,12 +12,16 @@ const state = {
   userCreated: null,
   userLogged: null,
   userLoggedIn: false,
+  authModalShow: false,
   trash: {},
 };
 
 const mutations = {
   toggleAuth() {
     this.state.userLoggedIn = !this.state.userLoggedIn;
+  },
+  toggleAuthModal() {
+    this.state.authModalShow = !this.state.authModalShow;
   },
 };
 

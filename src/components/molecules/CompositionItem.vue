@@ -1,9 +1,10 @@
 <template>
   <div class="border border-gray-200 p-3 mb-4 rounded">
     <div v-show="!showForm">
-      <h4 class="inline-block text-2xl font-bold">
-        {{ song.modified_name }}
-      </h4>
+      <span class="inline-block text-2xl font-bold">
+        {{ song.modified_name }} by {{ song.artist_name }}
+      </span>
+
       <button
         class="ml-1 py-1 px-2 text-sm rounded text-white bg-red-600 float-right"
         @click.prevent="deleteSong"
@@ -39,6 +40,28 @@
         :initial-values="song"
         @submit="edit"
       >
+        <div class="mb-3">
+          <label class="inline-block mb-2">Artist Name</label>
+          <vee-field
+            type="text"
+            name="artist_name"
+            class="
+              block
+              w-full
+              py-1.5
+              px-3
+              text-gray-800
+              border border-gray-300
+              transition
+              duration-500
+              focus:outline-none focus:border-black
+              rounded
+            "
+            placeholder="Enter Artist Name"
+            @input="updateUnsavedFlag(true)"
+          />
+          <ErrorMessage class="text-red-600" name="artist_name" />
+        </div>
         <div class="mb-3">
           <label class="inline-block mb-2">Song Title</label>
           <vee-field
@@ -112,6 +135,7 @@ export default {
       showForm: false,
       schema: {
         modified_name: "required",
+        artist_name: "required",
         genre: "alpha_spaces",
       },
       in_submission: false,

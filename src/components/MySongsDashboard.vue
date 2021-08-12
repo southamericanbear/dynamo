@@ -47,6 +47,7 @@ export default {
   },
   methods: {
     updateSong(i, values) {
+      this.songs[i].artist_name = values.artist_name;
       this.songs[i].modified_name = values.modified_name;
       this.songs[i].genre = values.genre;
     },

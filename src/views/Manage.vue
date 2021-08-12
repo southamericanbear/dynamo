@@ -31,12 +31,12 @@
 </template>
 
 <script>
-import UploadSection from '@/components/UploadSection';
-import { songsCollection, auth } from '@/includes/firebase';
-import CompositionItem from '@/components/molecules/CompositionItem';
+import UploadSection from "@/components/UploadSection";
+import { songsCollection, auth } from "@/includes/firebase";
+import CompositionItem from "@/components/molecules/CompositionItem";
 
 export default {
-  name: 'manage',
+  name: "manage",
   data() {
     return {
       songs: [],
@@ -49,7 +49,7 @@ export default {
   },
   async created() {
     const snapshot = await songsCollection
-      .where('uid', '==', auth.currentUser.uid)
+      .where("uid", "==", auth.currentUser.uid)
       .get();
 
     snapshot.forEach(this.addSong);
@@ -78,7 +78,7 @@ export default {
       next();
     } else {
       const leave = confirm(
-        'You have unsaved changes. Are you sure you want to leave?'
+        "You have unsaved changes. Are you sure you want to leave?"
       );
       next(leave);
     }
