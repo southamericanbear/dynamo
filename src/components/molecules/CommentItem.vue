@@ -3,7 +3,7 @@
     <!-- Comment Author -->
     <div class="mb-5">
       <div class="font-bold">{{ comment.name }}</div>
-      <time>{{ comment.datePosted }}hola</time>
+      <time>{{ comment.datePosted }}</time>
     </div>
 
     <p>
