@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 import modules from "./modules";
 import { songsCollection, auth, commentsCollection } from "@/includes/firebase";
 import router from "@/router/index.js";
+import { Howl } from "howler";
+import helper from "@/includes/helper";
 
 export default createStore({
   state: {
@@ -14,8 +16,36 @@ export default createStore({
     comment_in_submission: false,
     comment_alert_variant: "bg-blue-500",
     comment_alert_msg: "Please wait! Your comment is being submitted.",
+    currentSong: {},
+    sound: {},
+    seek: "00:00",
+    duration: "00:00",
+    playerProgress: "0%",
   },
-  mutations: {},
+  mutations: {
+    newSong(state, payload) {
+      state.currentSong = payload;
+      state.sound = new Howl({
+        src: [payload.url],
+        html5: true,
+      });
+    },
+    updatePosition(state) {
+      state.seek = helper.formatTime(state.sound.seek());
+      state.duration = helper.formatTime(state.sound.duration());
+      state.playerProgress = `${
+        (state.sound.seek() / state.sound.duration()) * 100
+      }%`;
+    },
+  },
+  getters: {
+    playing: (state) => {
+      if (state.sound.playing) {
+        return state.sound.playing();
+      }
+      return false;
+    },
+  },
   actions: {
     async getSongs() {
       if (this.state.pendingRequest) {
@@ -68,7 +98,13 @@ export default createStore({
         name: auth.currentUser.displayName,
         uid: auth.currentUser.uid,
       };
+
       await commentsCollection.add(post);
+
+      this.state.song.comment_count += 1;
+      await songsCollection.doc(router.currentRoute._value.params.id).update({
+        comment_count: this.state.song.comment_count,
+      });
 
       this.state.comment_in_submission = false;
       this.state.comment_alert_variant = "bg-green-400";
@@ -88,6 +124,46 @@ export default createStore({
           ...doc.data(),
         }),
       ]);
+    },
+
+    async newSong({ commit, dispatch, state }, payload) {
+      if (state.sound instanceof Howl) {
+        state.sound.unload();
+        commit("newSong", payload);
+        state.sound.play();
+        state.sound.on("play", () => {
+          requestAnimationFrame(() => {
+            dispatch("progress");
+          });
+        });
+      } else {
+        commit("newSong", payload);
+        state.sound.play();
+        state.sound.on("play", () => {
+          requestAnimationFrame(() => {
+            dispatch("progress");
+          });
+        });
+      }
+    },
+    progress({ commit, dispatch, state }) {
+      commit("updatePosition");
+      if (state.sound.playing()) {
+        requestAnimationFrame(() => {
+          dispatch("progress");
+        });
+      }
+    },
+    async toggleAudio({ state }) {
+      if (!state.sound.playing) {
+        return;
+      }
+
+      if (state.sound.playing()) {
+        state.sound.pause();
+      } else {
+        state.sound.play();
+      }
     },
   },
   modules,

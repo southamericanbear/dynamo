@@ -16,8 +16,11 @@
     <div class="relative">
       <!-- Play/Pause Button -->
       <div class="float-left w-7 h-7 leading-3">
-        <button type="button">
-          <i class="fa fa-play text-gray-500 text-xl"></i>
+        <button type="button" @click.prevent="toggleAudio">
+          <i
+            class="fa text-gray-500 text-xl"
+            :class="{ 'fa-play': !playing, 'fa-pause': playing }"
+          ></i>
         </button>
       </div>
       <!-- Current Position -->
@@ -35,7 +38,7 @@
           mt-1
         "
       >
-        <span class="player-currenttime">00:00</span>
+        <span class="player-currenttime">{{ seek }}</span>
       </div>
       <!-- Scrub -->
       <div class="float-left w-7 h-7 leading-3 ml-7 mt-2 player-scrub">
@@ -48,9 +51,10 @@
             mx-auto
             player-song-info
           "
+          v-if="currentSong.modified_name"
         >
-          <span class="song-title">Song Title</span> by
-          <span class="song-artist">Artist</span>
+          <span class="song-title">{{ currentSong.modified_name }}</span> by
+          <span class="song-artist">{{ currentSong.artist_name }}</span>
         </div>
         <!-- Scrub Container  -->
         <span
@@ -69,7 +73,7 @@
           <!-- Player Ball -->
           <span
             class="absolute top-neg-8 text-gray-800 text-lg"
-            style="left: 50%"
+            :style="{ left: playerProgress }"
           >
             <i class="fas fa-circle"></i>
           </span>
@@ -83,7 +87,7 @@
               from-green-500
               to-green-400
             "
-            style="width: 50%"
+            :style="{ width: playerProgress }"
           ></span>
         </span>
       </div>
@@ -102,15 +106,23 @@
           mt-1
         "
       >
-        <span class="player-duration">03:06</span>
+        <span class="player-duration">{{ duration }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters, mapState } from "vuex";
 export default {
   name: "player",
+  computed: {
+    ...mapState(["seek", "duration", "playerProgress", "currentSong"]),
+    ...mapGetters(["playing"]),
+  },
+  methods: {
+    ...mapActions(["toggleAudio"]),
+  },
 };
 </script>
 

@@ -18,8 +18,12 @@
           rounded-full
           focus:outline-none
         "
+        @click.prevent="newSong(song)"
       >
-        <i class="fas fa-play"></i>
+        <i
+          class="fas"
+          :class="{ 'fa-play': !playing, 'fa-pause': playing }"
+        ></i>
       </button>
       <div class="z-50 text-left ml-8">
         <!-- Song Info -->
@@ -34,7 +38,7 @@
     <div class="bg-white rounded border border-gray-200 relative flex flex-col">
       <div class="px-6 pt-6 pb-5 font-bold border-b border-gray-200">
         <!-- Comment Count -->
-        <span class="card-title">Comments (15)</span>
+        <span class="card-title">Comments ({{ song.comment_count }})</span>
         <i class="fa fa-comments float-right text-green-400 text-2xl"></i>
       </div>
       <div class="p-6">
@@ -79,6 +83,7 @@
         </vee-form>
         <!-- Sort Comments -->
         <select
+          v-model="sort"
           class="
             block
             mt-4
@@ -100,7 +105,7 @@
   </section>
   <ul class="container mx-auto">
     <CommentItem
-      v-for="comment in comments"
+      v-for="comment in sortedComments"
       :key="comment.docID"
       :comment="comment"
     />
@@ -109,7 +114,7 @@
 
 <script>
 import CommentItem from "@/components/molecules/CommentItem.vue";
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 export default {
   name: "song",
   components: { CommentItem },
@@ -119,6 +124,7 @@ export default {
       schema: {
         comment: "required|min:3",
       },
+      sort: "1",
     };
   },
   computed: {
@@ -131,16 +137,43 @@ export default {
       "comment_alert_msg",
       "comments",
     ]),
+    ...mapGetters(["playing"]),
+    sortedComments() {
+      return this.comments.slice().sort((a, b) => {
+        if (this.sort === "1") {
+          return new Date(b.datePosted) - new Date(a.datePosted);
+        }
+        return new Date(a.datePosted) - new Date(b.datePosted);
+      });
+    },
   },
   async created() {
     this.getSong(this.songID);
+
+    const { sort } = this.$route.query;
+
+    this.sort = sort === "1" || sort === "2" ? sort : "1";
+
     this.getComments();
   },
   methods: {
-    ...mapActions(["getSong", "postComment", "getComments"]),
+    ...mapActions(["getSong", "postComment", "getComments", "newSong"]),
     submitForm(value, { resetForm }) {
       this.postComment(value);
       resetForm();
+      this.getComments();
+    },
+  },
+  watch: {
+    sort(newVal) {
+      if (newVal === this.$route.query.sort) {
+        return;
+      }
+      this.$router.push({
+        query: {
+          sort: newVal,
+        },
+      });
     },
   },
 };
