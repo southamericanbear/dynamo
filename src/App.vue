@@ -1,6 +1,10 @@
 <template>
   <Header />
-  <router-view></router-view>
+  <router-view v-slot="{ Component }">
+    <transition name="fade" mode="out-in">
+      <component :is="Component"></component>
+    </transition>
+  </router-view>
   <Player />
   <AuthModal />
 </template>
@@ -27,3 +31,16 @@ export default {
   },
 };
 </script>
+
+<style>
+.fade-enter-form {
+  opacity: 0;
+}
+.fade-enter-actice {
+  transition: all 0.5s liner;
+}
+.fade-leave-to {
+  transition: all 0.5s linear;
+  opacity: 0;
+}
+</style>

@@ -1,6 +1,8 @@
 <template>
-  <IntroSection />
-  <Main />
+  <main>
+    <IntroSection />
+    <Main />
+  </main>
 </template>
 
 <script>

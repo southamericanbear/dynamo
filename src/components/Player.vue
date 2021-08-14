@@ -69,6 +69,7 @@
             relative
             cursor-pointer
           "
+          @click.prevent="updateSeek"
         >
           <!-- Player Ball -->
           <span
@@ -121,7 +122,7 @@ export default {
     ...mapGetters(["playing"]),
   },
   methods: {
-    ...mapActions(["toggleAudio"]),
+    ...mapActions(["toggleAudio", "updateSeek"]),
   },
 };
 </script>
