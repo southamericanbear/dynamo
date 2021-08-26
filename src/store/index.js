@@ -1,11 +1,12 @@
 import { createStore } from "vuex";
-import modules from "./modules";
-import { songsCollection, auth, commentsCollection } from "@/includes/firebase";
+import { songsCollection, commentsCollection } from "@/includes/firebase";
 import router from "@/router/index.js";
 import { Howl } from "howler";
 import helper from "@/includes/helper";
+import { auth } from "./modules/auth";
 
 export default createStore({
+  modules: { auth },
   state: {
     songs: [],
     song: {},
@@ -90,7 +91,6 @@ export default createStore({
       this.state.comment_alert_variant = "bg-blue-500";
       this.state.comment_alert_msg =
         "Please wait! Your comment is being submitted.";
-
       const post = {
         content: comment,
         datePosted: new Date().toString(),
@@ -180,5 +180,4 @@ export default createStore({
       });
     },
   },
-  modules,
 });

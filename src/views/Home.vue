@@ -1,18 +1,18 @@
 <template>
   <main>
     <IntroSection />
-    <Main />
+    <MainBody />
   </main>
 </template>
 
 <script>
 import IntroSection from "@/components/IntroSection.vue";
-import Main from "@/components/Main.vue";
+import MainBody from "@/components/MainBody.vue";
 export default {
   name: "home",
   components: {
     IntroSection,
-    Main,
+    MainBody,
   },
 };
 </script>

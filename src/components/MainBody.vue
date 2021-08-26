@@ -40,7 +40,7 @@
 import SongItem from "@/components/molecules/SongItem.vue";
 import { mapState, mapActions } from "vuex";
 export default {
-  name: "main",
+  name: "mainBody",
   components: { SongItem },
   computed: {
     ...mapState(["songs"]),
