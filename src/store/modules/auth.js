@@ -100,7 +100,6 @@ export default {
 
     async signOut({ commit }) {
       await auth.signOut();
-      console.log(this.$route);
       commit("toggleAuth");
     },
   },

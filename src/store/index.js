@@ -1,12 +1,12 @@
 import { createStore } from "vuex";
-import { songsCollection, commentsCollection } from "@/includes/firebase";
+import { songsCollection, commentsCollection, auth } from "@/includes/firebase";
 import router from "@/router/index.js";
 import { Howl } from "howler";
 import helper from "@/includes/helper";
-import { auth } from "./modules/auth";
+import modules from "./modules";
 
 export default createStore({
-  modules: { auth },
+  modules,
   state: {
     songs: [],
     song: {},
